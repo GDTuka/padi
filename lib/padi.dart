@@ -2,14 +2,14 @@ library padi;
 
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
 /// DI container
-abstract class Padi extends IPadi {
+abstract class Padi {
   final Completer<void> _inited = Completer();
-  @override
-  void init(BuildContext context) {
-    initAsync(context).then((value) => _inited.complete()).onError((e, st) => onError(context, e, st));
+
+  Future<void> _init(BuildContext context) async {
+    // ignore: use_build_context_synchronously
+    await initAsync(context).then((value) => _inited.complete()).onError((e, st) => onError(context, e, st));
   }
 
   Future<void> initAsync(BuildContext context);
@@ -21,37 +21,68 @@ abstract class Padi extends IPadi {
   }
 }
 
-/// interface for DI container
-abstract class IPadi extends ChangeNotifier {
-  void init(BuildContext context);
-
-  static T of<T extends IPadi>(BuildContext context) => context.read<T>();
-
-  static T depend<T extends IPadi>(BuildContext context) => context.watch<T>();
-}
-
-/// Padi widget
-class PadiWidget<T extends Padi> extends ChangeNotifierProvider<T> {
-  PadiWidget({
+class PadiScope<T extends Padi> extends InheritedWidget {
+  const PadiScope({
     super.key,
-    required T Function() create,
-    required WidgetBuilder loaderBuilder,
-    WidgetBuilder? errorBuilder,
+    required this.padi,
     required super.child,
-  }) : super(
-          create: (context) => create()..init(context),
-          builder: (context, child) => FutureBuilder(
-            future: context.read<T>()._inited.future,
-            builder: (context, snap) {
-              if (snap.connectionState != ConnectionState.done) {
-                return loaderBuilder(context);
-              }
-              if (snap.hasError && errorBuilder != null) {
-                return errorBuilder(context);
-              }
-              return child!;
-            },
-          ),
-        );
+  });
+
+  final T padi;
+
+  static PadiScope<T>? maybeOf<T extends Padi>(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<PadiScope<T>>();
+
+  static PadiScope<T> of<T extends Padi>(BuildContext context) {
+    final padiScope = maybeOf<T>(context);
+    if (padiScope == null) {
+      throw StateError('No PadiScope of type $T found in context');
+    }
+    return padiScope;
+  }
+
+  @override
+  bool updateShouldNotify(covariant PadiScope<T> oldWidget) {
+    return oldWidget.padi != padi;
+  }
 }
 
+class PadiWidget<T extends Padi> extends StatelessWidget {
+  const PadiWidget({
+    super.key,
+    required this.create,
+    required this.child,
+    required this.loaderBuilder,
+    this.errorBuilder,
+  });
+
+  final Widget child;
+  final WidgetBuilder loaderBuilder;
+  final WidgetBuilder? errorBuilder;
+  final T Function() create;
+
+  Future<T> _init(BuildContext context) async {
+    final padi = create();
+    await padi._init(context);
+    return padi;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<void>(
+      future: _init(context),
+      builder: (context, snap) {
+        if (snap.connectionState != ConnectionState.done) {
+          return loaderBuilder(context);
+        }
+        if (snap.hasError && errorBuilder != null) {
+          return errorBuilder!(context);
+        }
+        return PadiScope(
+          padi: snap.data as T,
+          child: child,
+        );
+      },
+    );
+  }
+}
