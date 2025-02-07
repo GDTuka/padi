@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 abstract class Padi {
   final Completer<void> _inited = Completer();
 
-  Future<void> init(BuildContext context) async {
+  Future<void> _init(BuildContext context) async {
     // ignore: use_build_context_synchronously
     await initAsync(context).then((value) => _inited.complete()).onError((e, st) => onError(context, e, st));
   }
@@ -65,7 +65,7 @@ class PadiWidget<T extends Padi> extends StatelessWidget {
 
   Future<T> _init(BuildContext context) async {
     final padi = create();
-    await padi.init(context);
+    await padi._init(context);
     return padi;
   }
 
