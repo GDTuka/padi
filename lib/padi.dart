@@ -56,8 +56,8 @@ class OldPadiWidget<T extends Padi> extends ChangeNotifierProvider<T> {
         );
 }
 
-class _PadiScope<T extends IPadi> extends InheritedWidget {
-  const _PadiScope({
+class PadiScope<T extends IPadi> extends InheritedWidget {
+  const PadiScope({
     super.key,
     required this.padi,
     required super.child,
@@ -67,7 +67,7 @@ class _PadiScope<T extends IPadi> extends InheritedWidget {
 
   // ignore: unused_element
   static T? maybeOf<T extends IPadi>(BuildContext context) =>
-      context.dependOnInheritedWidgetOfExactType<_PadiScope<T>>()! as T;
+      context.dependOnInheritedWidgetOfExactType<PadiScope<T>>()! as T;
 
   // ignore: unused_element
   static T of<T extends IPadi>(BuildContext context) {
@@ -115,7 +115,7 @@ class PadiWidget<T extends IPadi> extends StatelessWidget {
         if (snap.hasError && errorBuilder != null) {
           return errorBuilder!(context);
         }
-        return _PadiScope<T>(
+        return PadiScope<T>(
           padi: snap.data as T,
           child: child,
         );
