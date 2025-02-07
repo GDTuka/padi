@@ -21,7 +21,7 @@ abstract class Padi {
   }
 }
 
-class PadiScope<T extends Padi> extends InheritedWidget {
+class PadiScope extends InheritedWidget {
   const PadiScope({
     super.key,
     required this.padi,
@@ -31,12 +31,11 @@ class PadiScope<T extends Padi> extends InheritedWidget {
   final Padi padi;
 
   // ignore: unused_element
-  static T? maybeOf<T extends Padi>(BuildContext context) =>
-      context.dependOnInheritedWidgetOfExactType<PadiScope<T>>()! as T;
+  static PadiScope? maybeOf(BuildContext context) => context.dependOnInheritedWidgetOfExactType<PadiScope>();
 
   // ignore: unused_element
-  static T of<T extends Padi>(BuildContext context) {
-    final padi = maybeOf<T>(context);
+  static PadiScope of(BuildContext context) {
+    final padi = maybeOf(context);
     if (padi == null) {
       throw StateError('No Padi found in context');
     }
@@ -80,7 +79,7 @@ class PadiWidget<T extends Padi> extends StatelessWidget {
         if (snap.hasError && errorBuilder != null) {
           return errorBuilder!(context);
         }
-        return PadiScope<T>(
+        return PadiScope(
           padi: snap.data as T,
           child: child,
         );
