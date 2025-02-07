@@ -21,30 +21,29 @@ abstract class Padi {
   }
 }
 
-class PadiScope extends InheritedWidget {
+class PadiScope<T extends Padi> extends InheritedWidget {
   const PadiScope({
     super.key,
     required this.padi,
     required super.child,
   });
 
-  final Padi padi;
+  final T padi;
 
-  // ignore: unused_element
-  static PadiScope? maybeOf(BuildContext context) => context.dependOnInheritedWidgetOfExactType<PadiScope>();
+  static PadiScope<T>? maybeOf<T extends Padi>(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<PadiScope<T>>();
 
-  // ignore: unused_element
-  static PadiScope of(BuildContext context) {
-    final padi = maybeOf(context);
-    if (padi == null) {
-      throw StateError('No Padi found in context');
+  static PadiScope<T> of<T extends Padi>(BuildContext context) {
+    final padiScope = maybeOf<T>(context);
+    if (padiScope == null) {
+      throw StateError('No PadiScope of type $T found in context');
     }
-    return padi;
+    return padiScope;
   }
 
   @override
-  bool updateShouldNotify(covariant InheritedWidget oldWidget) {
-    return false;
+  bool updateShouldNotify(covariant PadiScope<T> oldWidget) {
+    return oldWidget.padi != padi;
   }
 }
 
