@@ -1,6 +1,6 @@
 ## Features
 
-This PADI - Provider Async Dependency Injection - simple async DI
+This PADI - Async Dependency Injection - simple async DI
 
 ## Usage
 
@@ -43,5 +43,5 @@ runApp(
 get dependency from youre di
 
 ```dart
-context.read<UserScope>().youreDep;
+PadiScope.of<GlobalScope>(this);
 ```

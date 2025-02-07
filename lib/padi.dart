@@ -30,15 +30,17 @@ class PadiScope<T extends Padi> extends InheritedWidget {
 
   final T padi;
 
-  static PadiScope<T>? maybeOf<T extends Padi>(BuildContext context) =>
-      context.dependOnInheritedWidgetOfExactType<PadiScope<T>>();
+  static T? maybeOf<T extends Padi>(BuildContext context) {
+    final padiScope = context.dependOnInheritedWidgetOfExactType<PadiScope<T>>();
+    return padiScope?.padi;
+  }
 
-  static PadiScope<T> of<T extends Padi>(BuildContext context) {
-    final padiScope = maybeOf<T>(context);
-    if (padiScope == null) {
+  static T of<T extends Padi>(BuildContext context) {
+    final T? padi = maybeOf<T>(context);
+    if (padi == null) {
       throw StateError('No PadiScope of type $T found in context');
     }
-    return padiScope;
+    return padi;
   }
 
   @override
