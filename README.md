@@ -14,20 +14,20 @@ class UserScope extends Padi {
 Add some deps
 ```dart
 class UserScope extends Padi {
-  late final String youreDep;
+  late final String yourDep;
   @override
   Future<void> initAsync(BuildContext context) async {
-    youreDep = "hello di";
+    yourDep = "hello di";
   }
 
   @override
   Future<void> onError(BuildContext context, Object? error, StackTrace? stackTrace) async {
-    //youre hanlde here
+    //your hanlde here
     super.onError(context, error, stackTrace);
   }
 }
 ```
-Create Padi Widget that will wrap youre dependency
+Create Padi Widget that will wrap your dependency
 
 ```dart
 runApp(
@@ -40,8 +40,8 @@ runApp(
 )
 ```
 
-get dependency from youre di
+get dependency from your di
 
 ```dart
-PadiScope.of<GlobalScope>(context);
+PadiScope.of<UserScope>(context);
 ```
