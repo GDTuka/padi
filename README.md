@@ -43,5 +43,5 @@ runApp(
 get dependency from youre di
 
 ```dart
-PadiScope.of<GlobalScope>(this);
+PadiScope.of<GlobalScope>(context);
 ```
