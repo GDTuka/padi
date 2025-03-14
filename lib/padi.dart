@@ -55,6 +55,7 @@ class PadiWidget<T extends Padi> extends StatelessWidget {
     required this.create,
     required this.child,
     required this.loaderBuilder,
+    this.onCreated,
     this.errorBuilder,
   });
 
@@ -62,6 +63,7 @@ class PadiWidget<T extends Padi> extends StatelessWidget {
   final WidgetBuilder loaderBuilder;
   final WidgetBuilder? errorBuilder;
   final T Function() create;
+  final void Function(T)? onCreated;
 
   Future<T> _init(BuildContext context) async {
     final padi = create();
@@ -80,6 +82,7 @@ class PadiWidget<T extends Padi> extends StatelessWidget {
         if (snap.hasError && errorBuilder != null) {
           return errorBuilder!(context);
         }
+        onCreated?.call(snap.data as T);
         return PadiScope(
           padi: snap.data as T,
           child: child,

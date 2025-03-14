@@ -45,3 +45,20 @@ get dependency from your di
 ```dart
 PadiScope.of<UserScope>(context);
 ```
+
+PadiWidget arguments  explanation
+
+```dart
+  PadiWidget<UserScope>(
+    // Function that returns a PadiScope
+    create: UserScope.new,
+    // Widget shown while `initAsync` method is running
+    loaderBuilder: (context) => Container(),
+    // Widget shown when an error occurs in initAsync
+    errorBuilder: (context) => Container(),
+    // Called after instance of Padi is created. Contains instance of created scope in function arguments
+    onCreated: (padi) {},
+    // Child widget that will be displayed
+    child: const App(),
+  ),
+```
